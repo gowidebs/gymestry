@@ -1,11 +1,11 @@
 # 🏋️ Gymestry Global - Ultra-Modern Gym Management System
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Available-brightgreen)](https://yourusername.github.io/gymestry/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Available-brightgreen)](https://gowidebs.github.io/gymestry/)
 [![Flutter](https://img.shields.io/badge/Flutter-3.35.3-blue)](https://flutter.dev)
 [![Node.js](https://img.shields.io/badge/Node.js-Backend-green)](https://nodejs.org)
 
 ## 🚀 Live Demo
-**[Try Gymestry Live →](https://yourusername.github.io/gymestry/)**
+**[Try Gymestry Live →](https://gowidebs.github.io/gymestry/)**
 
 ## ✨ Features
 
@@ -54,7 +54,7 @@
 ### Web Demo (Instant)
 ```bash
 # Visit the live demo
-https://yourusername.github.io/gymestry/
+https://gowidebs.github.io/gymestry/
 ```
 
 ### Local Development
@@ -99,7 +99,7 @@ flutter run -d chrome
 
 ### GitHub Pages (Current)
 - Automatic deployment from `docs/` folder
-- Live at: `https://yourusername.github.io/gymestry/`
+- Live at: `https://gowidebs.github.io/gymestry/`
 
 ### Production Ready
 - **Mobile**: iOS App Store + Google Play Store
