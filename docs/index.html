@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gymestry Staff Management System</title>
+  <title>Gymestry - Professional Gym Management System</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d2d2d 100%);
       color: white;
       min-height: 100vh;
+      line-height: 1.6;
     }
+    
     .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
     
     /* Login Screen */
@@ -21,18 +25,20 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: linear-gradient(135deg, #0a0a0a 0%, #2d2d2d 100%);
     }
+    
     .login-card {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(30px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 25px;
-      padding: 50px;
+      border-radius: 20px;
+      padding: 40px;
       width: 100%;
-      max-width: 450px;
+      max-width: 400px;
       text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
+    
     .login-header h1 {
       font-size: 2.5em;
       margin-bottom: 10px;
@@ -40,51 +46,68 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .login-header p { opacity: 0.8; margin-bottom: 40px; }
+    
+    .login-header p { opacity: 0.8; margin-bottom: 30px; }
+    
     .form-group {
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       text-align: left;
     }
+    
     .form-group label {
       display: block;
       margin-bottom: 8px;
       color: #E53E3E;
       font-weight: 600;
     }
+    
     .form-group input, .form-group select {
       width: 100%;
-      padding: 15px;
+      padding: 12px 15px;
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
+      border-radius: 10px;
       color: white;
       font-size: 16px;
+      transition: all 0.3s ease;
     }
+    
     .form-group input:focus, .form-group select:focus {
       outline: none;
       border-color: #E53E3E;
       box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.2);
     }
+    
     .login-btn {
       width: 100%;
       padding: 15px;
       background: linear-gradient(45deg, #E53E3E, #FF6B6B);
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       color: white;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
     }
+    
     .login-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(229, 62, 62, 0.4);
     }
     
+    .demo-credentials {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.85em;
+      opacity: 0.7;
+    }
+    
     /* Dashboard Styles */
     .dashboard { display: none; }
     .dashboard.active { display: block; animation: fadeIn 0.5s ease-out; }
+    
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -96,103 +119,92 @@
       align-items: center;
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
-      padding: 20px 30px;
+      padding: 20px 25px;
       border-radius: 15px;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .user-info h2 { color: #E53E3E; margin-bottom: 5px; }
-    .user-info p { opacity: 0.7; }
+    
+    .user-info h2 { color: #E53E3E; margin-bottom: 5px; font-size: 1.5em; }
+    .user-info p { opacity: 0.7; font-size: 0.9em; }
+    
     .logout-btn {
       background: rgba(229, 62, 62, 0.2);
       border: 1px solid #E53E3E;
       color: white;
-      padding: 10px 20px;
-      border-radius: 10px;
+      padding: 8px 16px;
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
+      font-size: 0.9em;
     }
+    
     .logout-btn:hover { background: rgba(229, 62, 62, 0.4); }
     
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 25px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
     }
+    
     .stat-card {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 25px;
+      border-radius: 15px;
+      padding: 20px;
       text-align: center;
       transition: all 0.3s ease;
     }
+    
     .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(229, 62, 62, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(229, 62, 62, 0.2);
     }
-    .stat-icon {
-      font-size: 2.5em;
-      margin-bottom: 15px;
-      color: #E53E3E;
-    }
-    .stat-value {
-      font-size: 2em;
-      font-weight: bold;
-      color: #E53E3E;
-      margin-bottom: 5px;
-    }
-    .stat-label {
-      opacity: 0.8;
-      font-size: 0.9em;
-    }
+    
+    .stat-icon { font-size: 2em; margin-bottom: 10px; color: #E53E3E; }
+    .stat-value { font-size: 1.8em; font-weight: bold; color: #E53E3E; margin-bottom: 5px; }
+    .stat-label { opacity: 0.8; font-size: 0.85em; }
     
     .chart-container {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 30px;
-      margin: 30px 0;
+      border-radius: 15px;
+      padding: 25px;
+      margin: 25px 0;
     }
+    
+    .chart-container h3 { margin-bottom: 20px; color: #E53E3E; }
     
     .actions-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin: 30px 0;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin: 25px 0;
     }
+    
     .action-card {
       background: rgba(229, 62, 62, 0.1);
       border: 2px solid rgba(229, 62, 62, 0.3);
-      border-radius: 15px;
-      padding: 25px;
+      border-radius: 12px;
+      padding: 20px;
       text-align: center;
       cursor: pointer;
       transition: all 0.3s ease;
       position: relative;
-      overflow: hidden;
     }
+    
     .action-card:hover {
       background: rgba(229, 62, 62, 0.2);
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(229, 62, 62, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(229, 62, 62, 0.3);
     }
-    .action-icon {
-      font-size: 2em;
-      margin-bottom: 10px;
-      color: #E53E3E;
-    }
-    .action-title {
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-    .action-desc {
-      font-size: 0.9em;
-      opacity: 0.8;
-    }
+    
+    .action-icon { font-size: 1.8em; margin-bottom: 8px; color: #E53E3E; }
+    .action-title { font-weight: 600; margin-bottom: 5px; font-size: 0.9em; }
+    .action-desc { font-size: 0.8em; opacity: 0.8; }
     
     .live-indicator {
       display: inline-block;
@@ -203,6 +215,7 @@
       animation: blink 1s infinite;
       margin-right: 8px;
     }
+    
     @keyframes blink {
       0%, 50% { opacity: 1; }
       51%, 100% { opacity: 0.3; }
@@ -215,13 +228,22 @@
       background: #ff4444;
       color: white;
       border-radius: 50%;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 0.7em;
       font-weight: bold;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container { padding: 15px; }
+      .login-card { padding: 30px 20px; }
+      .top-bar { flex-direction: column; gap: 15px; text-align: center; }
+      .stats-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+      .actions-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
     }
   </style>
 </head>
@@ -231,7 +253,7 @@
     <div class="login-card">
       <div class="login-header">
         <h1>🏋️ Gymestry</h1>
-        <p>Staff Management System</p>
+        <p>Professional Gym Management System</p>
       </div>
       
       <form id="login-form">
@@ -259,7 +281,7 @@
         <button type="submit" class="login-btn">Login to Dashboard</button>
       </form>
       
-      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.9em; opacity: 0.7;">
+      <div class="demo-credentials">
         <p><strong>Demo Credentials:</strong></p>
         <p>Owner: owner@gym.com / admin123</p>
         <p>Admin: admin@gym.com / admin123</p>
@@ -275,7 +297,7 @@
       <div class="top-bar">
         <div class="user-info">
           <h2>👔 Gym Owner Dashboard</h2>
-          <p><span class="live-indicator"></span>Fitness First Dubai - Live Business Control</p>
+          <p><span class="live-indicator"></span>Fitness First Dubai - Business Control Center</p>
         </div>
         <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
@@ -305,30 +327,30 @@
       
       <div class="chart-container">
         <h3>📊 Revenue Analytics - Last 6 Months</h3>
-        <canvas id="ownerRevenueChart" width="400" height="200"></canvas>
+        <canvas id="revenueChart" width="400" height="200"></canvas>
       </div>
       
       <div class="actions-grid">
         <div class="action-card" onclick="showFeature('Staff Management')">
           <div class="action-icon">👨💼</div>
           <div class="action-title">Staff Management</div>
-          <div class="action-desc">Manage all gym staff, schedules, payroll</div>
+          <div class="action-desc">Manage employees & schedules</div>
           <div class="notification-badge">3</div>
         </div>
         <div class="action-card" onclick="showFeature('Financial Reports')">
           <div class="action-icon">📊</div>
           <div class="action-title">Financial Reports</div>
-          <div class="action-desc">Revenue, expenses, profit analysis</div>
+          <div class="action-desc">Revenue & expense analysis</div>
         </div>
         <div class="action-card" onclick="showFeature('Member Analytics')">
           <div class="action-icon">📈</div>
           <div class="action-title">Member Analytics</div>
-          <div class="action-desc">Growth trends, retention, churn analysis</div>
+          <div class="action-desc">Growth & retention insights</div>
         </div>
         <div class="action-card" onclick="showFeature('Business Settings')">
           <div class="action-icon">⚙️</div>
           <div class="action-title">Business Settings</div>
-          <div class="action-desc">Pricing, policies, gym configuration</div>
+          <div class="action-desc">Pricing & gym configuration</div>
         </div>
       </div>
     </div>
@@ -340,7 +362,7 @@
       <div class="top-bar">
         <div class="user-info">
           <h2>🔧 Admin Manager Dashboard</h2>
-          <p><span class="live-indicator"></span>System Administration & Operations</p>
+          <p><span class="live-indicator"></span>Operations & System Administration</p>
         </div>
         <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
@@ -372,23 +394,23 @@
         <div class="action-card" onclick="showFeature('Member Management')">
           <div class="action-icon">👥</div>
           <div class="action-title">Member Management</div>
-          <div class="action-desc">Add, edit, suspend member accounts</div>
+          <div class="action-desc">Add, edit member accounts</div>
           <div class="notification-badge">7</div>
         </div>
         <div class="action-card" onclick="showFeature('Class Scheduling')">
           <div class="action-icon">📅</div>
           <div class="action-title">Class Scheduling</div>
-          <div class="action-desc">Manage classes, instructors, bookings</div>
+          <div class="action-desc">Manage classes & instructors</div>
         </div>
         <div class="action-card" onclick="showFeature('Equipment Management')">
           <div class="action-icon">🏋️</div>
           <div class="action-title">Equipment Management</div>
-          <div class="action-desc">Maintenance, repairs, inventory</div>
+          <div class="action-desc">Maintenance & inventory</div>
         </div>
         <div class="action-card" onclick="showFeature('System Settings')">
           <div class="action-icon">⚙️</div>
           <div class="action-title">System Settings</div>
-          <div class="action-desc">User permissions, system configuration</div>
+          <div class="action-desc">User permissions & config</div>
         </div>
       </div>
     </div>
@@ -432,23 +454,23 @@
         <div class="action-card" onclick="showFeature('Member Check-in')">
           <div class="action-icon">📱</div>
           <div class="action-title">Member Check-in</div>
-          <div class="action-desc">QR scanner, manual check-in</div>
+          <div class="action-desc">QR scanner & manual entry</div>
           <div class="notification-badge">5</div>
         </div>
         <div class="action-card" onclick="showFeature('New Registration')">
           <div class="action-icon">🆕</div>
           <div class="action-title">New Registration</div>
-          <div class="action-desc">Register new members, tours</div>
+          <div class="action-desc">Register new members</div>
         </div>
         <div class="action-card" onclick="showFeature('Payment Processing')">
           <div class="action-icon">💳</div>
           <div class="action-title">Payment Processing</div>
-          <div class="action-desc">Membership fees, renewals</div>
+          <div class="action-desc">Membership fees & renewals</div>
         </div>
         <div class="action-card" onclick="showFeature('Customer Support')">
           <div class="action-icon">📞</div>
           <div class="action-title">Customer Support</div>
-          <div class="action-desc">Handle inquiries, complaints</div>
+          <div class="action-desc">Handle inquiries & complaints</div>
         </div>
       </div>
     </div>
@@ -460,7 +482,7 @@
       <div class="top-bar">
         <div class="user-info">
           <h2>💪 Personal Trainer Dashboard</h2>
-          <p><span class="live-indicator"></span>Client Training & Progress</p>
+          <p><span class="live-indicator"></span>Client Training & Progress Management</p>
         </div>
         <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
@@ -492,22 +514,22 @@
         <div class="action-card" onclick="showFeature('Client Management')">
           <div class="action-icon">👥</div>
           <div class="action-title">Client Management</div>
-          <div class="action-desc">View clients, progress, schedules</div>
+          <div class="action-desc">View clients & progress</div>
         </div>
         <div class="action-card" onclick="showFeature('Workout Plans')">
           <div class="action-icon">📋</div>
           <div class="action-title">Workout Plans</div>
-          <div class="action-desc">Create custom workout routines</div>
+          <div class="action-desc">Create custom routines</div>
         </div>
         <div class="action-card" onclick="showFeature('Progress Tracking')">
           <div class="action-icon">📈</div>
           <div class="action-title">Progress Tracking</div>
-          <div class="action-desc">Monitor client achievements</div>
+          <div class="action-desc">Monitor achievements</div>
         </div>
         <div class="action-card" onclick="showFeature('Session Booking')">
           <div class="action-icon">📅</div>
           <div class="action-title">Session Booking</div>
-          <div class="action-desc">Manage training appointments</div>
+          <div class="action-desc">Manage appointments</div>
           <div class="notification-badge">3</div>
         </div>
       </div>
@@ -523,17 +545,13 @@
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       
-      // Simple validation (in real app, this would be server-side)
       if (password === 'admin123') {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById(role + '-dashboard').classList.add('active');
         
-        // Initialize charts based on role
-        setTimeout(() => {
-          if (role === 'owner') {
-            initOwnerCharts();
-          }
-        }, 100);
+        if (role === 'owner') {
+          setTimeout(initRevenueChart, 100);
+        }
       } else {
         alert('Invalid credentials. Use password: admin123');
       }
@@ -545,8 +563,8 @@
       document.getElementById('login-form').reset();
     }
     
-    function initOwnerCharts() {
-      const ctx = document.getElementById('ownerRevenueChart').getContext('2d');
+    function initRevenueChart() {
+      const ctx = document.getElementById('revenueChart').getContext('2d');
       new Chart(ctx, {
         type: 'line',
         data: {
@@ -582,15 +600,15 @@
     
     function showFeature(featureName) {
       const features = {
-        'Staff Management': 'Manage all gym staff:\n• Employee profiles & schedules\n• Payroll management\n• Performance tracking\n• Role-based permissions\n• Attendance monitoring',
+        'Staff Management': 'Complete staff management system:\n• Employee profiles & schedules\n• Payroll management\n• Performance tracking\n• Role-based permissions\n• Attendance monitoring',
         'Financial Reports': 'Comprehensive financial analytics:\n• Revenue & expense tracking\n• Profit/loss statements\n• Member payment status\n• Tax reporting (UAE VAT)\n• Budget forecasting',
         'Member Analytics': 'Advanced member insights:\n• Growth & retention rates\n• Churn prediction\n• Usage patterns\n• Lifetime value analysis\n• Demographic reports',
         'Business Settings': 'Configure gym operations:\n• Membership pricing\n• Class schedules\n• Equipment management\n• Branch settings\n• Policy management',
         'Member Management': 'Complete member control:\n• Add/edit member profiles\n• Membership status tracking\n• Payment history\n• Freeze/suspend accounts\n• Communication logs',
         'Class Scheduling': 'Smart class management:\n• Schedule classes & instructors\n• Capacity management\n• Booking system\n• Waitlist handling\n• Attendance tracking',
-        'Equipment Management': 'Equipment lifecycle:\n• Maintenance schedules\n• Repair tracking\n• Inventory management\n• Usage analytics\n• Replacement planning',
+        'Equipment Management': 'Equipment lifecycle management:\n• Maintenance schedules\n• Repair tracking\n• Inventory management\n• Usage analytics\n• Replacement planning',
         'System Settings': 'System administration:\n• User permissions\n• Security settings\n• Backup management\n• Integration settings\n• Audit logs',
-        'Member Check-in': 'Streamlined check-in:\n• QR code scanning\n• Manual check-in\n• Guest registration\n• Access control\n• Real-time capacity',
+        'Member Check-in': 'Streamlined check-in process:\n• QR code scanning\n• Manual check-in\n• Guest registration\n• Access control\n• Real-time capacity tracking',
         'New Registration': 'Member onboarding:\n• Registration forms\n• Document upload\n• Payment processing\n• Tour scheduling\n• Welcome packages',
         'Payment Processing': 'Financial transactions:\n• Membership renewals\n• Personal training fees\n• Product sales\n• Refund processing\n• Payment plans',
         'Customer Support': 'Support management:\n• Inquiry tracking\n• Complaint resolution\n• Feedback collection\n• Communication history\n• Escalation procedures',
