@@ -3,45 +3,85 @@
 <head>
   <base href="/gymestry/docs/">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gymestry - Ultra-Modern Gym Management</title>
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Gymestry - Ultra-Modern Gym Management System">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Gymestry">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>Gymestry - Ultra-Modern Gym Management</title>
   <link rel="manifest" href="manifest.json">
   <style>
-    body { 
-      margin: 0; 
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); 
-      color: white; 
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-    .loading { 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      height: 100vh; 
-      flex-direction: column; 
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
     }
-    .spinner { 
-      width: 50px; 
-      height: 50px; 
-      border: 3px solid #333; 
-      border-top: 3px solid #E53E3E; 
-      border-radius: 50%; 
-      animation: spin 1s linear infinite; 
-      margin-bottom: 20px; 
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid #333;
+      border-top: 3px solid #E53E3E;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
     }
-    @keyframes spin { 
-      0% { transform: rotate(0deg); } 
-      100% { transform: rotate(360deg); } 
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
+    h1 { font-size: 2.5em; margin-bottom: 10px; }
+    p { opacity: 0.8; margin-bottom: 30px; }
+    .error { color: #ff6b6b; margin-top: 20px; }
   </style>
 </head>
 <body>
-  <div class="loading">
+  <div class="loading" id="loading">
     <div class="spinner"></div>
     <h1>🏋️ Gymestry</h1>
     <p>Loading Ultra-Modern Gym Management System...</p>
+    <div class="error" id="error" style="display: none;">
+      <p>Loading failed. <a href="#" onclick="location.reload()" style="color: #E53E3E;">Click to retry</a></p>
+    </div>
   </div>
-  <script src="flutter_bootstrap.js" async></script>
+
+  <script>
+    window.addEventListener('load', function(ev) {
+      setTimeout(() => {
+        if (document.getElementById('loading').style.display !== 'none') {
+          document.getElementById('error').style.display = 'block';
+        }
+      }, 10000);
+
+      if (typeof _flutter !== 'undefined' && _flutter.loader) {
+        _flutter.loader.loadEntrypoint({
+          serviceWorker: {
+            serviceWorkerVersion: "2885432774",
+          }
+        }).then(function(engineInitializer) {
+          return engineInitializer.initializeEngine();
+        }).then(function(appRunner) {
+          document.getElementById('loading').style.display = 'none';
+          return appRunner.runApp();
+        }).catch(function(error) {
+          console.error('Flutter loading error:', error);
+          document.getElementById('error').style.display = 'block';
+        });
+      } else {
+        console.error('Flutter loader not found');
+        document.getElementById('error').style.display = 'block';
+      }
+    });
+  </script>
+  <script src="flutter.js" defer></script>
 </body>
 </html>
