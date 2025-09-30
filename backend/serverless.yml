@@ -1,0 +1,620 @@
+service: gogym-backend
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    DYNAMODB_TABLE_PREFIX: GoGym
+    LEADS_TABLE: gogym-leads
+    PRODUCTS_TABLE: gogym-products
+    SALES_TABLE: gogym-sales
+    PROMOTIONS_TABLE: gogym-promotions
+    NOTIFICATIONS_TABLE: gogym-notifications
+    MEMBERSHIPS_TABLE: gogym-memberships
+    MEDIA_TABLE: gogym-media
+    SETTINGS_TABLE: gogym-settings
+    MEDIA_BUCKET: gogym-media-bucket
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
+      Resource: "arn:aws:s3:::gogym-media-bucket/*"
+
+functions:
+  getNearbyGyms:
+    handler: gyms.getNearbyGyms
+    events:
+      - http:
+          path: gyms/nearby
+          method: post
+          cors: true
+
+  getGymDetails:
+    handler: gyms.getGymDetails
+    events:
+      - http:
+          path: gyms/{gymId}
+          method: get
+          cors: true
+
+  createBooking:
+    handler: bookings.createBooking
+    events:
+      - http:
+          path: bookings
+          method: post
+          cors: true
+
+  getUserBookings:
+    handler: bookings.getUserBookings
+    events:
+      - http:
+          path: bookings/user/{userId}
+          method: get
+          cors: true
+
+  cancelBooking:
+    handler: bookings.cancelBooking
+    events:
+      - http:
+          path: bookings/{bookingId}/cancel
+          method: put
+          cors: true
+
+  createUser:
+    handler: users.createUser
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+
+  updateProSubscription:
+    handler: users.updateProSubscription
+    events:
+      - http:
+          path: users/{userId}/pro
+          method: put
+          cors: true
+
+  getDashboardStats:
+    handler: admin.getDashboardStats
+    events:
+      - http:
+          path: admin/stats
+          method: get
+          cors: true
+
+  getRevenueAnalytics:
+    handler: admin.getRevenueAnalytics
+    events:
+      - http:
+          path: admin/revenue
+          method: get
+          cors: true
+
+  getGymAnalytics:
+    handler: admin.getGymAnalytics
+    events:
+      - http:
+          path: admin/gyms
+          method: get
+          cors: true
+
+  getBookingReports:
+    handler: admin.getBookingReports
+    events:
+      - http:
+          path: admin/bookings
+          method: get
+          cors: true
+
+  getFeedPosts:
+    handler: social.getFeedPosts
+    events:
+      - http:
+          path: social/feed
+          method: get
+          cors: true
+
+  createPost:
+    handler: social.createPost
+    events:
+      - http:
+          path: social/posts
+          method: post
+          cors: true
+
+  likePost:
+    handler: social.likePost
+    events:
+      - http:
+          path: social/posts/{postId}/like
+          method: post
+          cors: true
+
+  getProgressLogs:
+    handler: progress.getProgressLogs
+    events:
+      - http:
+          path: progress/{userId}
+          method: get
+          cors: true
+
+  addProgressLog:
+    handler: progress.addProgressLog
+    events:
+      - http:
+          path: progress
+          method: post
+          cors: true
+
+  getUserStats:
+    handler: progress.getUserStats
+    events:
+      - http:
+          path: progress/{userId}/stats
+          method: get
+          cors: true
+
+  # Chat functions
+  createChatSession:
+    handler: chat.createChatSession
+    events:
+      - http:
+          path: chat/sessions
+          method: post
+          cors: true
+
+  sendMessage:
+    handler: chat.sendMessage
+    events:
+      - http:
+          path: chat/sessions/{sessionId}/messages
+          method: post
+          cors: true
+
+  getChatMessages:
+    handler: chat.getChatMessages
+    events:
+      - http:
+          path: chat/sessions/{sessionId}/messages
+          method: get
+          cors: true
+
+  # Referral functions
+  generateReferralCode:
+    handler: referrals.generateReferralCode
+    events:
+      - http:
+          path: referrals/{userId}/generate
+          method: post
+          cors: true
+
+  useReferralCode:
+    handler: referrals.useReferralCode
+    events:
+      - http:
+          path: referrals/use
+          method: post
+          cors: true
+
+  getUserReferrals:
+    handler: referrals.getUserReferrals
+    events:
+      - http:
+          path: referrals/{userId}
+          method: get
+          cors: true
+
+  # Trainer functions
+  getTrainers:
+    handler: trainers.getTrainers
+    events:
+      - http:
+          path: trainers
+          method: get
+          cors: true
+
+  bookTrainerSession:
+    handler: trainers.bookTrainerSession
+    events:
+      - http:
+          path: trainers/book
+          method: post
+          cors: true
+
+  getTrainerAvailability:
+    handler: trainers.getTrainerAvailability
+    events:
+      - http:
+          path: trainers/{trainerId}/availability
+          method: get
+          cors: true
+
+  # Corporate functions
+  createCorporatePlan:
+    handler: corporate.createCorporatePlan
+    events:
+      - http:
+          path: corporate/plans
+          method: post
+          cors: true
+
+  addCorporateEmployee:
+    handler: corporate.addCorporateEmployee
+    events:
+      - http:
+          path: corporate/{corporateId}/employees
+          method: post
+          cors: true
+
+  validateGateAccess:
+    handler: corporate.validateGateAccess
+    events:
+      - http:
+          path: corporate/gate/validate
+          method: post
+          cors: true
+
+  getCorporateAnalytics:
+    handler: corporate.getCorporateAnalytics
+    events:
+      - http:
+          path: corporate/{corporateId}/analytics
+          method: get
+          cors: true
+
+  leads:
+    handler: leads.handler
+    events:
+      - http:
+          path: leads
+          method: get
+          cors: true
+      - http:
+          path: leads
+          method: post
+          cors: true
+      - http:
+          path: leads/{id}
+          method: get
+          cors: true
+      - http:
+          path: leads/{id}
+          method: put
+          cors: true
+
+  dashboard:
+    handler: dashboard.handler
+    events:
+      - http:
+          path: dashboard
+          method: get
+          cors: true
+
+  pos:
+    handler: pos.handler
+    events:
+      - http:
+          path: pos/{type}
+          method: get
+          cors: true
+      - http:
+          path: pos/{type}
+          method: post
+          cors: true
+      - http:
+          path: pos/products/{id}
+          method: put
+          cors: true
+
+  promotions:
+    handler: promotions.handler
+    events:
+      - http:
+          path: promotions
+          method: get
+          cors: true
+      - http:
+          path: promotions
+          method: post
+          cors: true
+      - http:
+          path: promotions/{type}
+          method: get
+          cors: true
+      - http:
+          path: promotions/{id}
+          method: put
+          cors: true
+      - http:
+          path: notifications
+          method: post
+          cors: true
+
+  memberships:
+    handler: memberships.handler
+    events:
+      - http:
+          path: memberships
+          method: get
+          cors: true
+      - http:
+          path: memberships
+          method: post
+          cors: true
+      - http:
+          path: memberships/{id}
+          method: get
+          cors: true
+      - http:
+          path: memberships/{id}
+          method: put
+          cors: true
+      - http:
+          path: memberships/{id}/freeze
+          method: put
+          cors: true
+
+  media:
+    handler: media.handler
+    events:
+      - http:
+          path: media
+          method: get
+          cors: true
+      - http:
+          path: media
+          method: post
+          cors: true
+      - http:
+          path: media/{type}
+          method: get
+          cors: true
+      - http:
+          path: media/{id}
+          method: get
+          cors: true
+      - http:
+          path: media/{id}
+          method: delete
+          cors: true
+
+  settings:
+    handler: settings.handler
+    events:
+      - http:
+          path: settings
+          method: get
+          cors: true
+      - http:
+          path: settings/{category}
+          method: get
+          cors: true
+      - http:
+          path: settings/{category}
+          method: put
+          cors: true
+
+resources:
+  Resources:
+    LeadsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-leads
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-products
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    SalesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-sales
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    PromotionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-promotions
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    NotificationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-notifications
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    MembershipsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-memberships
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    MediaTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-media
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    SettingsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-settings
+        AttributeDefinitions:
+          - AttributeName: category
+            AttributeType: S
+        KeySchema:
+          - AttributeName: category
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    MediaBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: gogym-media-bucket
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [GET, PUT, POST, DELETE]
+              AllowedOrigins: ['*']
+              MaxAge: 3000
+
+  auth:
+    handler: auth.handler
+    events:
+      - http:
+          path: auth
+          method: post
+          cors: true
+
+  gateAccess:
+    handler: gate-access.handler
+    events:
+      - http:
+          path: gate/validate
+          method: post
+          cors: true
+      - http:
+          path: gate/logs
+          method: get
+          cors: true
+
+  transfers:
+    handler: transfers.handler
+    events:
+      - http:
+          path: transfers
+          method: get
+          cors: true
+      - http:
+          path: transfers
+          method: post
+          cors: true
+      - http:
+          path: transfers/{id}/approve
+          method: put
+          cors: true
+
+  freeze:
+    handler: freeze.handler
+    events:
+      - http:
+          path: memberships/{userId}/freeze
+          method: post
+          cors: true
+      - http:
+          path: memberships/{userId}/unfreeze
+          method: put
+          cors: true
+
+  paymentsUAE:
+    handler: payments-uae.handler
+    events:
+      - http:
+          path: payments/uae
+          method: post
+          cors: true
+      - http:
+          path: payments/uae
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    GateLogsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-gate-logs
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    TransfersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-transfers
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    PaymentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gogym-payments
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+plugins:
+  - serverless-offline
